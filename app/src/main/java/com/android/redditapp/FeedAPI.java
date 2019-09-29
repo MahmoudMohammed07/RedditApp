@@ -8,6 +8,6 @@ import retrofit2.http.GET;
 public interface FeedAPI {
     String BASE_URL = "https://www.reddit.com/r/";
 
-    @GET("news/.rss")
+    @GET("EarthPorn/.rss")
     Call<Feed> getFeed();
 }

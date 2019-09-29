@@ -26,11 +26,11 @@ public class ExtractXML {
         for (int i = 1; i < count; i++) {
             String temp = splitXML[i];
             int index = temp.indexOf("\"");
-            Log.d(TAG, "start: index: " + index);
-            Log.d(TAG, "start: extracted: " + temp);
+//            Log.d(TAG, "start: index: " + index);
+//            Log.d(TAG, "start: extracted: " + temp);
 
             temp = temp.substring(0, index);
-            Log.d(TAG, "start: snipped: " + temp);
+//            Log.d(TAG, "start: snipped: " + temp);
             result.add(temp);
         }
 
