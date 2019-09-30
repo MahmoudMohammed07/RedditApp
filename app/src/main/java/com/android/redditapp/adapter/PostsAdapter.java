@@ -44,8 +44,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHol
         postsViewHolder.progressBar.setVisibility(View.VISIBLE);
 
         Picasso.with(context).load(imageURL)
-                .placeholder(R.drawable.ic_image_failed)
-                .error(R.drawable.ic_image_failed)
+                .placeholder(R.drawable.reddit_alien)
+                .error(R.drawable.reddit_alien)
                 .into(postsViewHolder.thumbnailImageView, new Callback() {
                     @Override
                     public void onSuccess() {

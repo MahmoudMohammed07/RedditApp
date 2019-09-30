@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.redditapp.adapter.PostsAdapter;
@@ -27,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private PostsAdapter adapter;
+    private Button searchButton;
+    private EditText mFeedName;
+    private String currentFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,27 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        searchButton = findViewById(R.id.btn_search);
+        mFeedName = findViewById(R.id.et_feed_name);
+
+        init();
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String feedName = mFeedName.getText().toString();
+                if (!feedName.isEmpty()) {
+                    currentFeed = feedName;
+                    init();
+                } else {
+                    init();
+                }
+            }
+        });
+
+    }
+
+    private void init() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
@@ -44,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         FeedAPI feedAPI = retrofit.create(FeedAPI.class);
 
-        Call<Feed> call = feedAPI.getFeed();
+        Call<Feed> call = feedAPI.getFeed(currentFeed);
         call.enqueue(new Callback<Feed>() {
             @Override
             public void onResponse(Call<Feed> call, Response<Feed> response) {
@@ -78,13 +105,24 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     int lastPosition = postContent.size() - 1;
-                    posts.add(new Post(
-                            entries.get(i).getTitle(),
-                            entries.get(i).getAuthor().getName(),
-                            entries.get(i).getUpdated(),
-                            postContent.get(0),
-                            postContent.get(lastPosition)
-                    ));
+                    try {
+                        posts.add(new Post(
+                                entries.get(i).getTitle(),
+                                entries.get(i).getAuthor().getName(),
+                                entries.get(i).getUpdated(),
+                                postContent.get(0),
+                                postContent.get(lastPosition)
+                        ));
+                    } catch (NullPointerException e) {
+                        posts.add(new Post(
+                                entries.get(i).getTitle(),
+                                "None",
+                                entries.get(i).getUpdated(),
+                                postContent.get(0),
+                                postContent.get(lastPosition)
+                        ));
+                        Log.d(TAG, "onResponse: NullPointerException: " + e.getMessage());
+                    }
                 }
 
 //                for (int j = 0;j<posts.size();j++){
