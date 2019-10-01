@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.redditapp.adapter.CommentsAdapter;
 import com.android.redditapp.common.URLS;
 import com.android.redditapp.model.Comment;
 import com.android.redditapp.model.Feed;
@@ -42,11 +45,25 @@ public class CommentActivity extends AppCompatActivity {
 
     private ArrayList<Comment> mComments;
 
+    private RecyclerView recyclerView;
+    private CommentsAdapter adapter;
+
+    private TextView progressText;
+    private ProgressBar mProgressBar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
+        progressText = findViewById(R.id.tv_progressText);
+        mProgressBar = findViewById(R.id.pb_commentLoading);
         Log.d(TAG, "onCreate: Started...");
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        recyclerView = findViewById(R.id.rv_comments);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         initPost();
 
@@ -69,13 +86,47 @@ public class CommentActivity extends AppCompatActivity {
                 //Log.d(TAG, "onResponse: feed: " + response.body().getEntries());
                 Log.d(TAG, "onResponse: Server Response: " + response.toString());
 
+                mComments = new ArrayList<>();
                 List<Entry> entries = response.body().getEntries();
 
                 for (int i = 0; i < entries.size(); i++) {
                     ExtractXML extract = new ExtractXML("<div class=\"md\"><p>", "</p>",
                             entries.get(i).getContent());
-                    extract.start();
+                    List<String> commentDetails = extract.start();
+
+                    try {
+                        mComments.add(new Comment(
+                                commentDetails.get(0),
+                                entries.get(i).getAuthor().getName(),
+                                entries.get(i).getUpdated(),
+                                entries.get(i).getId()
+                        ));
+                    } catch (IndexOutOfBoundsException e) {
+                        mComments.add(new Comment(
+                                "Error reading comment",
+                                "None",
+                                "None",
+                                "None"
+                        ));
+                        Log.d(TAG, "onResponse: IndexOutOfBoundsException: " + e.getMessage());
+                    } catch (NullPointerException e) {
+                        mComments.add(new Comment(
+                                commentDetails.get(0),
+                                "None",
+                                entries.get(i).getUpdated(),
+                                entries.get(i).getId()
+                        ));
+                        Log.d(TAG, "onResponse: NullPointerException: " + e.getMessage());
+                    }
                 }
+
+                adapter = new CommentsAdapter(CommentActivity.this, mComments);
+                adapter.notifyDataSetChanged();
+                recyclerView.setAdapter(adapter);
+
+                mProgressBar.setVisibility(View.GONE);
+                progressText.setVisibility(View.GONE);
+
             }
 
             @Override
