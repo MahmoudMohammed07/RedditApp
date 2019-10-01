@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.redditapp.adapter.PostsAdapter;
+import com.android.redditapp.common.URLS;
 import com.android.redditapp.interfaces.OnItemClickListener;
 import com.android.redditapp.model.Feed;
 import com.android.redditapp.model.entry.Entry;
@@ -28,7 +29,7 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 public class MainActivity extends AppCompatActivity implements OnItemClickListener {
 
     private static final String TAG = "MainActivity";
-    private static final String BASE_URL = "https://www.reddit.com/r/";
+    URLS urls = new URLS();
 
     private RecyclerView recyclerView;
     private PostsAdapter adapter;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     private void init() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(urls.BASE_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .build();
 

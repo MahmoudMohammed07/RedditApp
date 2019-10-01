@@ -12,11 +12,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.redditapp.common.URLS;
+import com.android.redditapp.model.Comment;
 import com.android.redditapp.model.Feed;
 import com.android.redditapp.model.entry.Entry;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -27,7 +30,7 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 public class CommentActivity extends AppCompatActivity {
 
     private static final String TAG = "CommentActivity";
-    private static final String BASE_URL = "https://www.reddit.com/r/";
+    URLS urls = new URLS();
 
     private static String postUrl;
     private static String postThumbnailUrl;
@@ -36,6 +39,8 @@ public class CommentActivity extends AppCompatActivity {
     private static String postUpdated;
 
     private String currentFeed;
+
+    private ArrayList<Comment> mComments;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +55,7 @@ public class CommentActivity extends AppCompatActivity {
 
     private void init() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(urls.BASE_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .build();
 
@@ -67,7 +72,9 @@ public class CommentActivity extends AppCompatActivity {
                 List<Entry> entries = response.body().getEntries();
 
                 for (int i = 0; i < entries.size(); i++) {
-                    Log.d(TAG, "onResponse: entries: " + entries.get(i).toString());
+                    ExtractXML extract = new ExtractXML("<div class=\"md\"><p>", "</p>",
+                            entries.get(i).getContent());
+                    extract.start();
                 }
             }
 
@@ -101,7 +108,7 @@ public class CommentActivity extends AppCompatActivity {
         displayImage(postThumbnailUrl, thumbnail, progressBar);
 
         try {
-            String[] splitURL = postUrl.split(BASE_URL);
+            String[] splitURL = postUrl.split(urls.BASE_URL);
             currentFeed = splitURL[1];
             Log.d(TAG, "initPost: currentFeed: " + currentFeed);
         } catch (ArrayIndexOutOfBoundsException e) {
