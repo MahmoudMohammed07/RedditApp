@@ -1,5 +1,6 @@
 package com.android.redditapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.redditapp.adapter.PostsAdapter;
+import com.android.redditapp.interfaces.OnItemClickListener;
 import com.android.redditapp.model.Feed;
 import com.android.redditapp.model.entry.Entry;
 
@@ -23,7 +25,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemClickListener {
 
     private static final String TAG = "MainActivity";
     private static final String BASE_URL = "https://www.reddit.com/r/";
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private Button searchButton;
     private EditText mFeedName;
     private String currentFeed;
+    private ArrayList<Post> posts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         searchButton = findViewById(R.id.btn_search);
         mFeedName = findViewById(R.id.et_feed_name);
 
-        init();
-
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     currentFeed = feedName;
                     init();
                 } else {
-                    init();
+                    Toast.makeText(MainActivity.this, "Please, enter a sub reddit!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 //                Log.d(TAG, "onResponse: updated: " + entries.get(0).getUpdated());
 //                Log.d(TAG, "onResponse: title: " + entries.get(0).getTitle());
 
-                ArrayList<Post> posts = new ArrayList<>();
+                posts = new ArrayList<>();
 
                 for (int i = 0; i < entries.size(); i++) {
                     ExtractXML extractXML1 = new ExtractXML("<a href=", entries.get(i).getContent());
@@ -133,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
 //                            "Author: "+posts.get(j).getAuthor()+"\n "+
 //                            "Updated: "+posts.get(j).getDate_updated()+"\n ");
 //                }
-
-                adapter = new PostsAdapter(MainActivity.this, posts);
+                adapter = new PostsAdapter(MainActivity.this, posts, MainActivity.this);
                 adapter.notifyDataSetChanged();
                 recyclerView.setAdapter(adapter);
             }
@@ -145,5 +145,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "An Error Occurred", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Log.d(TAG, "onItemClick: Clicked: " + posts.get(position).toString());
+        Intent intent = new Intent(MainActivity.this, CommentActivity.class);
+        intent.putExtra("PostURL", posts.get(position).getPostURL());
+        intent.putExtra("ThumbnailURL", posts.get(position).getThumbnailURL());
+        intent.putExtra("Title", posts.get(position).getTitle());
+        intent.putExtra("Author", posts.get(position).getAuthor());
+        intent.putExtra("Updated", posts.get(position).getDate_updated());
+        startActivity(intent);
     }
 }

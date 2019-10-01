@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.android.redditapp.Post;
 import com.android.redditapp.R;
+import com.android.redditapp.interfaces.OnItemClickListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -21,17 +22,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHol
 
     private Context context;
     private ArrayList<Post> posts = new ArrayList<>();
+    private OnItemClickListener itemClickListener;
 
-    public PostsAdapter(Context context, ArrayList<Post> posts) {
+    public PostsAdapter(Context context, ArrayList<Post> posts, OnItemClickListener itemClickListener) {
         this.context = context;
         this.posts = posts;
+        this.itemClickListener = itemClickListener;
     }
 
     @NonNull
     @Override
     public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.card_layout_main, viewGroup, false);
-        return new PostsViewHolder(view);
+        return new PostsViewHolder(view, itemClickListener);
     }
 
     @Override
@@ -68,13 +71,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHol
         return posts.size();
     }
 
-    public class PostsViewHolder extends RecyclerView.ViewHolder {
+    public class PostsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView thumbnailImageView;
         TextView titleTextView, authorTextView, updatedTextView;
         ProgressBar progressBar;
 
-        public PostsViewHolder(@NonNull View itemView) {
+        OnItemClickListener clickListener;
+
+        public PostsViewHolder(@NonNull View itemView, OnItemClickListener clickListener) {
             super(itemView);
 
             thumbnailImageView = itemView.findViewById(R.id.cardImage);
@@ -82,6 +87,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHol
             authorTextView = itemView.findViewById(R.id.cardAuthor);
             updatedTextView = itemView.findViewById(R.id.cardUpdated);
             progressBar = itemView.findViewById(R.id.cardProgressDialog);
+
+            this.clickListener = clickListener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            clickListener.onItemClick(getAdapterPosition());
         }
     }
 }

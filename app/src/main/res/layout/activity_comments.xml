@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/rl_commentHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_postThumbnail"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/reddit_alien" />
+
+            <Button
+                android:id="@+id/btn_postReply"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_alignBottom="@id/iv_postThumbnail"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:text="Reply"
+                android:textAlignment="center"
+                android:textSize="8sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/iv_postThumbnail">
+
+                <TextView
+                    android:id="@+id/tv_postTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    tools:text="comment" />
+
+                <TextView
+                    android:id="@+id/tv_postAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_postTitle"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    tools:text="Author" />
+
+                <TextView
+                    android:id="@+id/tv_postUpdated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_postAuthor"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    tools:text="Last Updated" />
+
+            </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/pb_postLoading"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/pb_commentLoading"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/pb_commentLoading"
+            android:layout_alignTop="@id/pb_commentLoading"
+            android:layout_alignEnd="@id/pb_commentLoading"
+            android:layout_alignBottom="@id/pb_commentLoading"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            tools:text="Loading Comments..." />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_comments"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rl_commentHeading">
+        </android.support.v7.widget.RecyclerView>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
