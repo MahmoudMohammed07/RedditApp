@@ -2,7 +2,9 @@ package com.android.redditapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,6 +49,9 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
     private static String postTitle;
     private static String postAuthor;
     private static String postUpdated;
+    private static String postId;
+
+    private String modhash, cookie, username;
 
     private String currentFeed;
 
@@ -64,6 +70,8 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
 
         setupToolbar();
 
+        getSessionParams();
+
         progressText = findViewById(R.id.tv_progressText);
         mProgressBar = findViewById(R.id.pb_commentLoading);
         Log.d(TAG, "onCreate: Started...");
@@ -77,6 +85,13 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
         initPost();
 
         init();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Log.d(TAG, "onPostResume: Resuming Activity");
+        getSessionParams();
     }
 
     private void setupToolbar() {
@@ -173,6 +188,7 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
         postTitle = incomingIntent.getStringExtra("Title");
         postAuthor = incomingIntent.getStringExtra("Author");
         postUpdated = incomingIntent.getStringExtra("Updated");
+        postId = incomingIntent.getStringExtra("Id");
 
         TextView title = findViewById(R.id.tv_postTitle);
         TextView author = findViewById(R.id.tv_postAuthor);
@@ -199,7 +215,7 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: reply..");
-                getUserComment();
+                getUserComment(postId);
             }
         });
 
@@ -214,7 +230,7 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
         });
     }
 
-    private void getUserComment() {
+    private void getUserComment(String postID) {
         Dialog dialog = new Dialog(CommentActivity.this);
         dialog.setTitle("Add Comment");
         dialog.setContentView(R.layout.comment_input_dialog);
@@ -224,6 +240,17 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
 
         dialog.getWindow().setLayout(width, height);
         dialog.show();
+
+        Button btnPostComment = dialog.findViewById(R.id.btn_postComment);
+        final EditText comment = dialog.findViewById(R.id.et_dialogComment);
+
+        btnPostComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: Attempting to post comment.");
+
+            }
+        });
     }
 
     private void displayImage(String imageURL, ImageView imageView, final ProgressBar progressBar) {
@@ -245,12 +272,25 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
 
     @Override
     public void onItemClick(int position) {
-        getUserComment();
+        getUserComment(postId);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.navigation_menu, menu);
         return true;
+    }
+
+    private void getSessionParams() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(CommentActivity.this);
+
+        username = preferences.getString("SessionUsername", null);
+        modhash = preferences.getString("SessionModhash", null);
+        cookie = preferences.getString("SessionCookie", null);
+
+        Log.d(TAG, "getSessionParams: Storing session variables: \n" +
+                "username: " + username + "\n" +
+                "modhash: " + modhash + "\n" +
+                "cookie: " + cookie + "\n");
     }
 }

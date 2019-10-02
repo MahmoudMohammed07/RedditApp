@@ -139,7 +139,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                                 entries.get(i).getAuthor().getName(),
                                 entries.get(i).getUpdated(),
                                 postContent.get(0),
-                                postContent.get(lastPosition)
+                                postContent.get(lastPosition),
+                                entries.get(i).getId()
                         ));
                     } catch (NullPointerException e) {
                         posts.add(new Post(
@@ -147,20 +148,23 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                                 "None",
                                 entries.get(i).getUpdated(),
                                 postContent.get(0),
-                                postContent.get(lastPosition)
+                                postContent.get(lastPosition),
+                                entries.get(i).getId()
                         ));
                         Log.d(TAG, "onResponse: NullPointerException: " + e.getMessage());
                     }
                 }
 
-//                for (int j = 0;j<posts.size();j++){
-//                    Log.d(TAG, "onResponse: \n "+
-//                            "PostURL: "+posts.get(j).getPostURL()+"\n "+
-//                            "ThumbnailURL: "+posts.get(j).getThumbnailURL()+"\n "+
-//                            "Title: "+posts.get(j).getTitle()+"\n "+
-//                            "Author: "+posts.get(j).getAuthor()+"\n "+
-//                            "Updated: "+posts.get(j).getDate_updated()+"\n ");
+//                for (int j = 0; j < posts.size(); j++) {
+//                    Log.d(TAG, "onResponse: \n " +
+//                            "PostURL: " + posts.get(j).getPostURL() + "\n " +
+//                            "ThumbnailURL: " + posts.get(j).getThumbnailURL() + "\n " +
+//                            "Title: " + posts.get(j).getTitle() + "\n " +
+//                            "Author: " + posts.get(j).getAuthor() + "\n " +
+//                            "Updated: " + posts.get(j).getDate_updated() + "\n " +
+//                            "Id: " + posts.get(j).getId() + "\n ");
 //                }
+
                 adapter = new PostsAdapter(MainActivity.this, posts, MainActivity.this);
                 adapter.notifyDataSetChanged();
                 recyclerView.setAdapter(adapter);
@@ -183,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         intent.putExtra("Title", posts.get(position).getTitle());
         intent.putExtra("Author", posts.get(position).getAuthor());
         intent.putExtra("Updated", posts.get(position).getDate_updated());
+        intent.putExtra("Id", posts.get(position).getId());
         startActivity(intent);
     }
 
