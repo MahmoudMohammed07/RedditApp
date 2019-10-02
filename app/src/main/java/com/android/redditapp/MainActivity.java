@@ -5,7 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupToolbar();
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -63,6 +68,26 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             }
         });
 
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolBar_main);
+        setSupportActionBar(toolbar);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Log.d(TAG, "onMenuItemClick: clicked menu item: " + menuItem);
+
+                switch (menuItem.getItemId()) {
+                    case R.id.navLogin:
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                }
+
+                return false;
+            }
+        });
     }
 
     private void init() {
@@ -158,5 +183,11 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         intent.putExtra("Author", posts.get(position).getAuthor());
         intent.putExtra("Updated", posts.get(position).getDate_updated());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        return true;
     }
 }

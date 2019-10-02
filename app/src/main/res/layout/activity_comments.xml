@@ -8,10 +8,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolBar_main"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
         <RelativeLayout
             android:id="@+id/rl_commentHeading"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appBar_layout">
 
             <ImageView
                 android:id="@+id/iv_postThumbnail"
