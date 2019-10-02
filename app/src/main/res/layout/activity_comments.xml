@@ -91,20 +91,16 @@
             android:id="@+id/tv_progressText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@id/pb_commentLoading"
-            android:layout_alignTop="@id/pb_commentLoading"
-            android:layout_alignEnd="@id/pb_commentLoading"
-            android:layout_alignBottom="@id/pb_commentLoading"
+            android:layout_centerInParent="true"
+            android:text="Loading Comments..."
             android:textSize="10sp"
-            android:textStyle="bold"
-            tools:text="Loading Comments..." />
+            android:textStyle="bold" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_comments"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/rl_commentHeading">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_below="@id/rl_commentHeading"></android.support.v7.widget.RecyclerView>
 
     </RelativeLayout>
 

@@ -1,5 +1,6 @@
 package com.android.redditapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.android.redditapp.adapter.CommentsAdapter;
 import com.android.redditapp.common.URLS;
+import com.android.redditapp.interfaces.OnItemClickListener;
 import com.android.redditapp.model.Comment;
 import com.android.redditapp.model.Feed;
 import com.android.redditapp.model.entry.Entry;
@@ -30,7 +32,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-public class CommentActivity extends AppCompatActivity {
+public class CommentActivity extends AppCompatActivity implements OnItemClickListener {
 
     private static final String TAG = "CommentActivity";
     URLS urls = new URLS();
@@ -120,7 +122,7 @@ public class CommentActivity extends AppCompatActivity {
                     }
                 }
 
-                adapter = new CommentsAdapter(CommentActivity.this, mComments);
+                adapter = new CommentsAdapter(CommentActivity.this, mComments, CommentActivity.this);
                 adapter.notifyDataSetChanged();
                 recyclerView.setAdapter(adapter);
 
@@ -165,6 +167,36 @@ public class CommentActivity extends AppCompatActivity {
         } catch (ArrayIndexOutOfBoundsException e) {
             Log.d(TAG, "initPost: ArrayIndexOutOfBoundsException: " + e.getMessage());
         }
+
+        btnReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: reply..");
+                getUserComment();
+            }
+        });
+
+        thumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: Opening URL in the webView: " + postUrl);
+                Intent intent = new Intent(CommentActivity.this, WebViewActivity.class);
+                intent.putExtra("PostURL", postUrl);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void getUserComment() {
+        Dialog dialog = new Dialog(CommentActivity.this);
+        dialog.setTitle("Add Comment");
+        dialog.setContentView(R.layout.comment_input_dialog);
+
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.95);
+        int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.6);
+
+        dialog.getWindow().setLayout(width, height);
+        dialog.show();
     }
 
     private void displayImage(String imageURL, ImageView imageView, final ProgressBar progressBar) {
@@ -182,5 +214,10 @@ public class CommentActivity extends AppCompatActivity {
                         progressBar.setVisibility(View.GONE);
                     }
                 });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        getUserComment();
     }
 }
