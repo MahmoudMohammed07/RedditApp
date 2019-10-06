@@ -1,6 +1,7 @@
 package com.android.redditapp;
 
 import com.android.redditapp.Account.CheckLogin;
+import com.android.redditapp.Comments.CheckComment;
 import com.android.redditapp.model.Feed;
 
 import java.util.Map;
@@ -28,5 +29,13 @@ public interface FeedAPI {
             @Query("user") String user,
             @Query("password") String password,
             @Query("api_type") String type
+    );
+
+    @POST("{comment}")
+    Call<CheckComment> submitComment(
+            @HeaderMap Map<String, String> headers,
+            @Path("comment") String comment,
+            @Query("parent") String parent,
+            @Query("amp;text") String text
     );
 }

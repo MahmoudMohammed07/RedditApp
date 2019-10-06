@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.android.redditapp.R;
 import com.android.redditapp.interfaces.OnItemClickListener;
-import com.android.redditapp.model.Comment;
+import com.android.redditapp.Comments.Comment;
 
 import java.util.ArrayList;
 

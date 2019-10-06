@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.redditapp.Account.LoginActivity;
+import com.android.redditapp.Comments.CommentActivity;
 import com.android.redditapp.adapter.PostsAdapter;
 import com.android.redditapp.common.URLS;
 import com.android.redditapp.interfaces.OnItemClickListener;

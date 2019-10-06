@@ -1,4 +1,4 @@
-package com.android.redditapp;
+package com.android.redditapp.Comments;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -21,22 +21,28 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.redditapp.Account.CheckLogin;
 import com.android.redditapp.Account.LoginActivity;
+import com.android.redditapp.ExtractXML;
+import com.android.redditapp.FeedAPI;
+import com.android.redditapp.R;
+import com.android.redditapp.WebViewActivity;
 import com.android.redditapp.adapter.CommentsAdapter;
 import com.android.redditapp.common.URLS;
 import com.android.redditapp.interfaces.OnItemClickListener;
-import com.android.redditapp.model.Comment;
 import com.android.redditapp.model.Feed;
 import com.android.redditapp.model.entry.Entry;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public class CommentActivity extends AppCompatActivity implements OnItemClickListener {
@@ -230,8 +236,8 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
         });
     }
 
-    private void getUserComment(String postID) {
-        Dialog dialog = new Dialog(CommentActivity.this);
+    private void getUserComment(final String postID) {
+        final Dialog dialog = new Dialog(CommentActivity.this);
         dialog.setTitle("Add Comment");
         dialog.setContentView(R.layout.comment_input_dialog);
 
@@ -248,6 +254,55 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Attempting to post comment.");
+
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(urls.COMMENT_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+                FeedAPI feedAPI = retrofit.create(FeedAPI.class);
+
+                HashMap<String, String> headerMap = new HashMap<>();
+                headerMap.put("User-Agent", username);
+                headerMap.put("X-Modhash", modhash);
+                headerMap.put("cookie", "reddit_sessions" + cookie);
+
+                Log.d(TAG, "btnPostComment: \n" +
+                        "username: " + username + "\n" +
+                        "modhash: " + modhash + "\n" +
+                        "cookie: " + cookie + "\n");
+
+                Call<CheckComment> call = feedAPI.submitComment(headerMap, "comment", postID,
+                        comment.getText().toString());
+
+                call.enqueue(new retrofit2.Callback<CheckComment>() {
+                    @Override
+                    public void onResponse(Call<CheckComment> call, Response<CheckComment> response) {
+                        try {
+//                            Log.d(TAG, "onResponse: feed: " + response.body().toString());
+                            Log.d(TAG, "onResponse: Server Response: " + response.toString());
+
+                            String postSuccess = response.body().getSuccess();
+
+                            if (postSuccess.equals("true")) {
+                                dialog.dismiss();
+                                Toast.makeText(CommentActivity.this, "Post Successful", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(CommentActivity.this, "An Error Occurred. Did you sign in", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (NullPointerException e) {
+                            Log.d(TAG, "onResponse: NullPointerException: " + e.getMessage());
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CheckComment> call, Throwable t) {
+                        Log.d(TAG, "onFailure: Unable to retrieve RSS: " + t.getMessage());
+                        Toast.makeText(CommentActivity.this, "An Error Occurred", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             }
         });
@@ -272,7 +327,7 @@ public class CommentActivity extends AppCompatActivity implements OnItemClickLis
 
     @Override
     public void onItemClick(int position) {
-        getUserComment(postId);
+        getUserComment(mComments.get(position).getId());
     }
 
     @Override

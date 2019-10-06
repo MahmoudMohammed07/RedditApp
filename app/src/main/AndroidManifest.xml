@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CommentActivity" />
+        <activity android:name=".Comments.CommentActivity" />
         <activity android:name=".WebViewActivity" />
         <activity android:name=".Account.LoginActivity" />
     </application>

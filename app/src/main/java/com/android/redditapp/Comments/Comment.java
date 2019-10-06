@@ -1,4 +1,4 @@
-package com.android.redditapp.model;
+package com.android.redditapp.Comments;
 
 public class Comment {
 
