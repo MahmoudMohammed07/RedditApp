@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:background="@drawable/grey_border"
+    android:elevation="10dp"
     app:cardCornerRadius="5dp"
     app:cardElevation="5dp"
     app:cardMaxElevation="15dp"
@@ -21,6 +23,8 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:scaleType="centerCrop"
             tools:src="@drawable/reddit_alien" />
 
@@ -36,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="center_vertical"
+                android:textColor="@color/colorDarkGrey"
                 tools:text="Card Title" />
 
             <TextView
